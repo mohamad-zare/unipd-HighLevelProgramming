@@ -1,33 +1,35 @@
 # TASK 1	
 
-from pickle import FALSE
-from pickle import TRUE
+import random
 
 
-###### Nice guy strategy which is without processing the opponent's result since he/she always cooperate
-class nice_guy():
-
-    def __init__(self):
-        pass
-
-    def nice_guy(self):
-        return True
-
-    def process_results(self, my_strategy, other_strategy):
-        pass
+###### Nice guy strategy: He/She always cooperate.
+def nice_guy():
+    return True
 
 
-###### Bad guy strategy which is without processing the opponent's result since he/she always defect
-class bad_guy():
+###### Bad guy strategy: He/She always defect.
+def bad_guy():
+    return False
 
-    def __init__(self):
-        pass
 
-    def bad_guy(self):
-        return False
+###### Mainly bad strategy: He/She defect 75% times. (K is equal to 75 in our case)
+def mainly_bad():
+    return random.choices([True, False], [0.25, 0.75])[0]
 
-    def process_results(self, my_strategy, other_strategy):
-        pass
+
+###### Mainly nice strategy: He/She cooperate 75% times. (K is equal to 25 in our case)
+def mainly_nice():
+    return random.choices([True, False], [0.75, 0.25])[0]
+
+
+###### Tit for Tat strategy: He/She starts with cooperating then repeat what the opponent has done in the previous move.
+def tit_for_tat(n_rounds, strategy2):   
+    if n_rounds == 0:
+        c = True
+    else:
+        c = strategy2
+    return c
 
 
 ###### calculating the scores
@@ -40,14 +42,11 @@ def score(strategy1, strategy2):
     elif strategy1 and not strategy2:
       return (0, 5)
     else:
-      return (1, 1)
+      return (2, 2)
 
 
-   ###### Play a 5 rounds match between a Nice guy and a Bad guy
-def play_match(prisoner1, prisoner2):
-
-    p1 = prisoner1()
-    p2 = prisoner2()
+   ###### a 5 rounds match between a player with "tit for tat" strategy and a player with "mainly bad" strategy
+def play_match(strategy1 = tit_for_tat, strategy2 = mainly_bad):
 
     score1 = 0
     score2 = 0
@@ -55,14 +54,13 @@ def play_match(prisoner1, prisoner2):
 
     for n in range(n_rounds):
       
-      strategy1 = p1.nice_guy()
-      strategy2 = p2.bad_guy()
+      strategy1 = tit_for_tat(n, strategy2)
+      strategy2 = mainly_bad()
       scores = score(strategy1, strategy2)
       score1 += scores[0]
       score2 += scores[1]
-      p1.process_results(strategy1, strategy2)
-      p2.process_results(strategy2, strategy1)
+      print(f"Round {n+1} is over. Scores: {score1, score2}")
 
-    return (f"Game is over...\nThe winner is player two!\nPlayer two is an absolute lashi:D Never cooperated! while player one always cooperated! a naive guy. !!!AVOID THEM BOTH!!!\nSo the first player's score is {score1} and The second player's score is {score2}")
+    return ("Game is over...")
 
-print(play_match(nice_guy, bad_guy))
+print(play_match())
